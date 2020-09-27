@@ -1,3 +1,4 @@
 # CGAN-Emotion-Art
 
-![Test Image 1]()
+## Dataset Manipulation
+![Dataset samples](../images/dataset_samples.png)
