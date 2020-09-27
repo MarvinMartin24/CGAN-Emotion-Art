@@ -1,4 +1,4 @@
 # CGAN-Emotion-Art
 
 ## Dataset Manipulation
-![Dataset samples](../images/dataset_samples.png)
+![Dataset samples](https://github.com/MarvinMartin24/CGAN-Emotion-Art/blob/master/images/dataset_samples.png)
