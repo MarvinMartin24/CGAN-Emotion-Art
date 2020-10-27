@@ -9,7 +9,10 @@
 * For now thoses Gan's (generators) are store in `./weights` folder.
 
 ## Requirements
-* torch, numpy, PIL; matplotlib
+* torch
+* numpy
+* PIL
+* matplotlib
 
 ## Usage
 ```bash
