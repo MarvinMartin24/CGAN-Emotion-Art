@@ -13,6 +13,7 @@
 
 ## Usage
 ```bash
+git clone https://github.com/MarvinMartin24/CGAN-Emotion-Art/
 # STYLE can be portrait or abstract or landscape or flower-painting
 # EMOTION can be positive or negative or neutral
 # s will save the images in animation/img
