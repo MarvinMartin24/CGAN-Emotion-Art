@@ -6,12 +6,7 @@ import os, random, glob, sys
 import numpy as np
 from PIL import Image
 
-# make sure to enable GPU acceleration!
 device = 'cpu'
-# Set random seed for reproducibility
-manualSeed = 999 #manualSeed = random.randint(1, 10000) # use if you want new results | print("Random Seed: ", manualSeed)
-random.seed(manualSeed)
-torch.manual_seed(manualSeed)
 
 class Generator(nn.Module):
 
@@ -70,7 +65,7 @@ def get_one_hot_labels_from_str(num_img_to_gen ,str, label_classes):
   labels = torch.full((num_img_to_gen,), label_index, dtype=torch.float16)
   return get_one_hot_labels(labels.to(torch.int64), len(label_classes))
 
-def get_noise(n_samples, input_dim, device=device):
+def get_noise(n_samples, input_dim, device):
     return torch.randn(n_samples, input_dim, device=device)
 
 def combine_vectors(x, y):
@@ -103,26 +98,31 @@ if __name__ == '__main__':
     label_index = label_classes.index(emotion)
     one_hot_labels = get_one_hot_labels_from_str(num_img_to_gen, emotion, label_classes).to(device)
     noise = get_noise(num_img_to_gen, z_dim, device=device).to(device)
-    one_hot_labels[:,2] -= torch.tensor(0.01).type(torch.LongTensor) # reduce positive
-    one_hot_labels[:,0] += torch.tensor(0.01).type(torch.LongTensor) # rise negative
     noise_and_labels = combine_vectors(noise, one_hot_labels.float())
+
+    print(noise_and_labels)
 
 
     gen = Generator(input_dim = noise_and_labels.shape[1]).to(device)
     gen.load_state_dict(torch.load(path, map_location=torch.device(device)))
     fake = gen(noise_and_labels).to(device).detach().numpy()
 
-
-    fig = plt.figure(figsize=(10, 4))
-    for i in np.arange(num_img_to_gen):
-        ax = fig.add_subplot(2, num_img_to_gen/2, i+1)
-        fig.patch.set_visible(False)
-        ax.set_aspect("auto")
-        ax.axis('off')
-        ax.autoscale()
+    if num_img_to_gen == 1:
         if save:
-            imshow(fake[i], label_index,label_classes, True)
+            imshow(fake[0], label_index,label_classes, True)
         else:
-            imshow(fake[i], label_index,label_classes)
-    fig.tight_layout()
+            imshow(fake[0], label_index,label_classes)
+    else:
+        fig = plt.figure(figsize=(10, 4))
+        for i in np.arange(num_img_to_gen):
+            ax = fig.add_subplot(2, num_img_to_gen/2, i+1)
+            fig.patch.set_visible(False)
+            ax.set_aspect("auto")
+            ax.axis('off')
+            ax.autoscale()
+            if save:
+                imshow(fake[i], label_index,label_classes, True)
+            else:
+                imshow(fake[i], label_index,label_classes)
+        fig.tight_layout()
     plt.show()
