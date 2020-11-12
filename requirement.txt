@@ -1,0 +1,7 @@
+flask
+pandas
+torch
+numpy
+Pillow
+matplotlib
+gunicorn

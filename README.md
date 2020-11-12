@@ -13,6 +13,7 @@
 * numpy
 * PIL
 * matplotlib
+* flask
 
 ## Usage
 ```bash

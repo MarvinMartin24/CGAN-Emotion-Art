@@ -1,12 +1,12 @@
 import torch
 from torch import nn
+import torchvision.utils as vutils
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
 import os, random, glob, sys
 import numpy as np
 from PIL import Image
 
-device = 'cpu'
 
 class Generator(nn.Module):
 
@@ -48,7 +48,7 @@ def imshow(img, label, label_classes, save=False, epoch="", batch=""):
     plt.title(str(label_classes[int(label)]))
     plt.imshow(np.transpose(img, (1, 2, 0)))  # convert from Tensor image
     if save:
-      plt.savefig(f'./animation/img/fake.png')
+      plt.savefig('./images/fake.png')
 
 def make_gif():
     fp_in = "./animation/img/fake_*"
@@ -74,8 +74,33 @@ def combine_vectors(x, y):
 def get_dir_gen_w(category):
     return f'./weights/{category}/netG_{category}_64.weight'
 
+def generate(selected_emotion, selected_style, nb_img):
+    z_dim = 100
+    device = 'cpu'
+    label_classes = ['negative', 'neutral', 'positive']
+    style_classes = ['portrait', 'landscape', 'abstract', "flower-painting"]
+    n_classes = len(label_classes)
+    num_img_to_gen = int(nb_img)
+
+    emotion = selected_emotion
+
+    gen = Generator(input_dim = z_dim + len(label_classes)).to(device)
+    model_path = "./weights/" + selected_style.split('_')[1] + "/" + selected_style
+    gen.load_state_dict(torch.load(model_path, map_location=torch.device(device)))
+
+    label_index = label_classes.index(emotion)
+    one_hot_labels = get_one_hot_labels_from_str(num_img_to_gen, emotion, label_classes).to(device)
+    noise = get_noise(num_img_to_gen, z_dim, device=device).to(device)
+    noise_and_labels = combine_vectors(noise, one_hot_labels.float())
+
+    fake = gen(noise_and_labels).data.cpu()
+    vutils.save_image(fake.data, './images/fake.png' , normalize=True)
+
+
 if __name__ == '__main__':
+
     save = False
+    device = 'cpu'
 
     z_dim = 100
     label_classes = ['negative', 'neutral', 'positive']
@@ -99,9 +124,6 @@ if __name__ == '__main__':
     one_hot_labels = get_one_hot_labels_from_str(num_img_to_gen, emotion, label_classes).to(device)
     noise = get_noise(num_img_to_gen, z_dim, device=device).to(device)
     noise_and_labels = combine_vectors(noise, one_hot_labels.float())
-
-    print(noise_and_labels)
-
 
     gen = Generator(input_dim = noise_and_labels.shape[1]).to(device)
     gen.load_state_dict(torch.load(path, map_location=torch.device(device)))

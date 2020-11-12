@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Select </title>
+</head>
+<body>
+	<h1>Select a style and emotion to generate</h1>
+	<form id="upload-form" action="{{url_for('upload')}}" method= "POST" enctype="multipart/form-data">
+		<div>
+			<label for="style">Choose an image style:</label>
+			<select id="style" name="style">
+				<option value="netG_portrait_64.weight">Portrait</option>
+				<option value="netG_abstract_64.weight">Abstract</option>
+				<option value="netG_flower-painting_64.weight">Flower</option>
+				<option value="netG_landscape_64.weight">Landscape</option>
+            </select>
+		</div>
+        <div>
+			<label for="emotion">Choose an emotion:</label>
+			<select id="emotion" name="emotion">
+				<option value="positive">positive</option>
+				<option value="negative">negative</option>
+				<option value="neutral">neutral</option>
+            </select>
+		</div>
+        <div>
+			<label for="nb_img">Choose the number of images:</label>
+			<select id="nb_img" name="nb_img">
+				<option value=1>1</option>
+				<option value=8>8</option>
+				<option value=16>16</option>
+                <option value=24>24</option>
+                <option value=64>64</option>
+                <option value=128>128</option>
+            </select>
+		</div>
+        <input type="submit" value="Generate">
+</body>
+</html>
