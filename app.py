@@ -7,8 +7,6 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 @app.route("/")
 def index():
-    for style in ['portrait', 'landscape', 'abstract', "flower-painting"]:
-        generator_64.download_file_from_google_drive(style)
     return render_template("upload.html")
 
 @app.route("/upload", methods=['POST'])
@@ -20,6 +18,7 @@ def upload():
 
 @app.route('/main/<selected_emotion>/<selected_style>/<nb_img>')
 def send_processed_image(selected_emotion, selected_style, nb_img):
+    generator_64.download_file_from_google_drive(selected_style)
     generator_64.generate(selected_emotion, selected_style, nb_img)
     return send_from_directory("images", "fake.png")
 
