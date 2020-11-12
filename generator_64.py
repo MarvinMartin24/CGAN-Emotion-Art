@@ -7,6 +7,7 @@ import os, random, glob, sys
 import numpy as np
 from PIL import Image
 import requests
+import errno
 
 
 class Generator(nn.Module):
@@ -95,10 +96,31 @@ def generate(selected_emotion, selected_style, nb_img):
     noise_and_labels = combine_vectors(noise, one_hot_labels.float())
 
     fake = gen(noise_and_labels).data.cpu()
+
+    try:
+        os.mkdir(f"./images/")
+    except OSError as exc:
+        if exc.errno != errno.EEXIST:
+            raise
+        pass
     vutils.save_image(fake.data, './images/fake.png' , normalize=True)
 
 def download_file_from_google_drive(style):
 
+    try:
+        os.mkdir(f"./weights/")
+    except OSError as exc:
+        if exc.errno != errno.EEXIST:
+            raise
+        pass
+
+    try:
+        os.mkdir(f"./weights/{style}/")
+    except OSError as exc:
+        if exc.errno != errno.EEXIST:
+            raise
+        pass
+    
     if style == "portrait":
         id = "1Hd3NRmyjVDZLMkmgmLkJwqyik-l-NNPJ"
     elif style == "abstract":
