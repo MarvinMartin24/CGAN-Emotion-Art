@@ -1,7 +1,5 @@
 # CGAN-Emotion-Art
 
-![Generator](https://github.com/MarvinMartin24/CGAN-Emotion-Art/blob/master/animation/img/fake.png)
-
 ## Project overview
 * From [Wiki-Art Emotion](http://saifmohammad.com/WebPages/wikiartemotions.html), We built a VGG16 Classifier (98% train acc - 50 val acc) with 3 emotion classes (positive, negative and neutral).
 * From this classifier, we labelised the all dataset [WikiArt](https://www.kaggle.com/ipythonx/wikiart-gangogh-creating-art-gan).
