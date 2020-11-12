@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import os, random, glob, sys
 import numpy as np
 from PIL import Image
+import requests
 
 
 class Generator(nn.Module):
@@ -85,7 +86,7 @@ def generate(selected_emotion, selected_style, nb_img):
     emotion = selected_emotion
 
     gen = Generator(input_dim = z_dim + len(label_classes)).to(device)
-    model_path = "./weights/" + selected_style.split('_')[1] + "/" + selected_style
+    model_path = f"./weights/{selected_style}/netG_{selected_style}_64.weight"
     gen.load_state_dict(torch.load(model_path, map_location=torch.device(device)))
 
     label_index = label_classes.index(emotion)
@@ -95,6 +96,44 @@ def generate(selected_emotion, selected_style, nb_img):
 
     fake = gen(noise_and_labels).data.cpu()
     vutils.save_image(fake.data, './images/fake.png' , normalize=True)
+
+def download_file_from_google_drive(style):
+
+    if style == "portrait":
+        id = "1Hd3NRmyjVDZLMkmgmLkJwqyik-l-NNPJ"
+    elif style == "abstract":
+        id = "1JJnZX2LEOdPGGnUvD8e9fqCgTg022229"
+    elif style == "landscape":
+        id = "1R4tNVTC51FFE5e93FvhBwDARMH8ICAUz"
+    elif style == "flower-painting":
+        id = "1Ic5-DBb1WsLJ-d3Sl0nZ7txdeuvl6hJC"
+
+    destination = f"./weights/{style}/netG_{style}_64.weight"
+
+    def get_confirm_token(response):
+        for key, value in response.cookies.items():
+            if key.startswith('download_warning'):
+                return value
+        return None
+
+    def save_response_content(response, destination):
+        CHUNK_SIZE = 32768
+        with open(destination, "wb") as f:
+            for chunk in response.iter_content(CHUNK_SIZE):
+                if chunk: # filter out keep-alive new chunks
+                    f.write(chunk)
+
+    URL = "https://docs.google.com/uc?export=download"
+    session = requests.Session()
+    response = session.get(URL, params = { 'id' : id }, stream = True)
+    token = get_confirm_token(response)
+
+    if token:
+        params = { 'id' : id, 'confirm' : token }
+        response = session.get(URL, params = params, stream = True)
+
+    save_response_content(response, destination)
+
 
 
 if __name__ == '__main__':
@@ -118,6 +157,8 @@ if __name__ == '__main__':
     if num_img_to_gen not in np.linspace(1, 20, 20): raise NameError('# of images to generate must be between 1 and 20')
     if emotion not in label_classes: raise NameError(f'Input emotion must be one of those: {label_classes}')
     if style not in style_classes: raise NameError(f'Input style must be one of those: {style_classes}')
+
+    download_file_from_google_drive(style)
 
     path = get_dir_gen_w(style)
     label_index = label_classes.index(emotion)

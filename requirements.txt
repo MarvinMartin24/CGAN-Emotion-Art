@@ -5,3 +5,4 @@ numpy
 Pillow
 matplotlib
 gunicorn
+requests

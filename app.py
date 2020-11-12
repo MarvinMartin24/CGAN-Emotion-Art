@@ -7,6 +7,8 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 @app.route("/")
 def index():
+    for style in ['portrait', 'landscape', 'abstract', "flower-painting"]:
+        generator_64.download_file_from_google_drive(style)
     return render_template("upload.html")
 
 @app.route("/upload", methods=['POST'])
