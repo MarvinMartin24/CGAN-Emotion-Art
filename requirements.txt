@@ -1,6 +1,7 @@
 flask
 pandas
 http://download.pytorch.org/whl/cpu/torch-0.4.1-cp36-cp36m-linux_x86_64.whl
+torchvision==0.6.0+cpu
 numpy
 Pillow
 matplotlib
